@@ -57,7 +57,7 @@ namespace BusinessLogic.Managers
             }
         }
 
-        public async Task<Patient> GetPatientByCIAsync(string ci)
+        public async Task<Patient?> GetPatientByCIAsync(string ci)
         {
             _logger.LogInformation("Getting patient with CI: {CI}", ci);
             var patients = await GetAllPatientsAsync();
@@ -100,7 +100,7 @@ namespace BusinessLogic.Managers
             }
         }
 
-        public async Task<Patient> UpdatePatientAsync(string ci, string name, string lastName)
+        public async Task<Patient?> UpdatePatientAsync(string ci, string name, string lastName)
         {
             _logger.LogInformation("Updating patient with CI: {CI}", ci);
 

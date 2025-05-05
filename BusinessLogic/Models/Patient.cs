@@ -4,10 +4,10 @@ namespace BusinessLogic.Models
 {
     public class Patient
     {
-        public string Name { get; set; }
-        public string LastName { get; set; }
-        public string CI { get; set; }
-        public string BloodGroup { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string CI { get; set; } = string.Empty;
+        public string BloodGroup { get; set; } = string.Empty;
 
         public override string ToString()
         {

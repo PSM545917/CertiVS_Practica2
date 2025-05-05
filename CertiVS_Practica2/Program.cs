@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using BusinessLogic.Managers;
 using Services.ExternalServices;
+using Swashbuckle.AspNetCore.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +32,7 @@ builder.Services.AddSingleton<GiftManager>();
 builder.Services.AddSingleton<PatientManager>(sp =>
 {
     var config = sp.GetRequiredService<IConfiguration>();
-    var patientsFilePath = config["AppSettings:PatientsFilePath"];
+    var patientsFilePath = config["AppSettings:PatientsFilePath"] ?? "Database/patients.txt";
     var logger = sp.GetRequiredService<ILogger<PatientManager>>();
     return new PatientManager(patientsFilePath, logger);
 });

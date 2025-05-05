@@ -33,7 +33,7 @@ namespace Services.ExternalServices
                 var gifts = JsonSerializer.Deserialize<List<Gift>>(content, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
-                });
+                }) ?? new List<Gift>();
 
                 _logger.LogInformation("Successfully retrieved {Count} gifts", gifts.Count);
                 return gifts;

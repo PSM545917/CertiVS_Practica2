@@ -25,15 +25,15 @@ namespace CertiVS.Controllers
         // DTO classes for API interaction
         public class CreatePatientRequest
         {
-            public string Name { get; set; }
-            public string LastName { get; set; }
-            public string CI { get; set; }
+            public string Name { get; set; } = string.Empty;
+            public string LastName { get; set; } = string.Empty;
+            public string CI { get; set; } = string.Empty;
         }
 
         public class UpdatePatientRequest
         {
-            public string Name { get; set; }
-            public string LastName { get; set; }
+            public string Name { get; set; } = string.Empty;
+            public string LastName { get; set; } = string.Empty;
         }
 
         [HttpGet]
