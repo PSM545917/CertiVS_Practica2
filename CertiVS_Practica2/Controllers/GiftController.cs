@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Services.Models;
 
-namespace CertiVS_Practica2.Controllers
+namespace CertiVS.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
