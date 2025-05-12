@@ -36,15 +36,37 @@ namespace CertiVS.Controllers
             public string LastName { get; set; } = string.Empty;
         }
 
+        public class PatientResponse
+        {
+            public string Name { get; set; } = string.Empty;
+            public string LastName { get; set; } = string.Empty;
+            public string CI { get; set; } = string.Empty;
+            public string BloodGroup { get; set; } = string.Empty;
+            public string PatientCode { get; set; } = string.Empty;
+
+            public static PatientResponse FromPatient(Patient patient)
+            {
+                return new PatientResponse
+                {
+                    Name = patient.Name,
+                    LastName = patient.LastName,
+                    CI = patient.CI,
+                    BloodGroup = patient.BloodGroup,
+                    PatientCode = patient.PatientCode
+                };
+            }
+        }
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<Patient>>> GetAllPatients()
+        public async Task<ActionResult<IEnumerable<PatientResponse>>> GetAllPatients()
         {
             _logger.LogInformation("Received request to get all patients");
             try
             {
                 var patients = await _patientManager.GetAllPatientsAsync();
-                return Ok(patients);
+                var response = patients.ConvertAll(p => PatientResponse.FromPatient(p));
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -56,7 +78,7 @@ namespace CertiVS.Controllers
         [HttpGet("{ci}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Patient>> GetPatientByCI(string ci)
+        public async Task<ActionResult<PatientResponse>> GetPatientByCI(string ci)
         {
             _logger.LogInformation("Received request to get patient with CI: {CI}", ci);
             try
@@ -66,7 +88,8 @@ namespace CertiVS.Controllers
                 {
                     return NotFound("Patient not found");
                 }
-                return Ok(patient);
+                var response = PatientResponse.FromPatient(patient);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -78,7 +101,7 @@ namespace CertiVS.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Patient>> CreatePatient([FromBody] CreatePatientRequest request)
+        public async Task<ActionResult<PatientResponse>> CreatePatient([FromBody] CreatePatientRequest request)
         {
             _logger.LogInformation("Received request to create new patient with CI: {CI}", request.CI);
 
@@ -99,7 +122,8 @@ namespace CertiVS.Controllers
                 };
 
                 var createdPatient = await _patientManager.CreatePatientAsync(newPatient);
-                return CreatedAtAction(nameof(GetPatientByCI), new { ci = createdPatient.CI }, createdPatient);
+                var response = PatientResponse.FromPatient(createdPatient);
+                return CreatedAtAction(nameof(GetPatientByCI), new { ci = createdPatient.CI }, response);
             }
             catch (InvalidOperationException ex)
             {
@@ -116,7 +140,7 @@ namespace CertiVS.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Patient>> UpdatePatient(string ci, [FromBody] UpdatePatientRequest request)
+        public async Task<ActionResult<PatientResponse>> UpdatePatient(string ci, [FromBody] UpdatePatientRequest request)
         {
             _logger.LogInformation("Received request to update patient with CI: {CI}", ci);
 
@@ -132,7 +156,8 @@ namespace CertiVS.Controllers
                 {
                     return NotFound("Patient not found");
                 }
-                return Ok(updatedPatient);
+                var response = PatientResponse.FromPatient(updatedPatient);
+                return Ok(response);
             }
             catch (Exception ex)
             {

@@ -25,16 +25,18 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Register services
+// Register HTTP client services
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<GiftService>();
+builder.Services.AddSingleton<PatientCodeService>();
 builder.Services.AddSingleton<GiftManager>();
 builder.Services.AddSingleton<PatientManager>(sp =>
 {
     var config = sp.GetRequiredService<IConfiguration>();
     var patientsFilePath = config["AppSettings:PatientsFilePath"] ?? "Database/patients.txt";
     var logger = sp.GetRequiredService<ILogger<PatientManager>>();
-    return new PatientManager(patientsFilePath, logger);
+    var patientCodeService = sp.GetRequiredService<PatientCodeService>();
+    return new PatientManager(patientsFilePath, logger, patientCodeService);
 });
 
 var app = builder.Build();

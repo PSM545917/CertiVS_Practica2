@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BusinessLogic.Models;
 using Microsoft.Extensions.Logging;
+using Services.ExternalServices;
 
 namespace BusinessLogic.Managers
 {
@@ -12,11 +13,16 @@ namespace BusinessLogic.Managers
     {
         private readonly string _patientsFilePath;
         private readonly ILogger<PatientManager> _logger;
+        private readonly PatientCodeService _patientCodeService;
 
-        public PatientManager(string filePath, ILogger<PatientManager> logger)
+        public PatientManager(
+            string filePath, 
+            ILogger<PatientManager> logger,
+            PatientCodeService patientCodeService)
         {
             _patientsFilePath = filePath;
             _logger = logger;
+            _patientCodeService = patientCodeService;
 
             // Ensure the file exists
             if (!File.Exists(_patientsFilePath))
@@ -86,9 +92,17 @@ namespace BusinessLogic.Managers
             // Assign random blood group
             patient.BloodGroup = BloodGroup.GetRandomBloodGroup();
 
-            // Append to file
             try
             {
+                // Generate patient code from the external service
+                patient.PatientCode = await _patientCodeService.GeneratePatientCodeAsync(
+                    patient.Name, 
+                    patient.LastName, 
+                    patient.CI);
+                
+                _logger.LogInformation("Generated patient code: {PatientCode}", patient.PatientCode);
+
+                // Append to file
                 await File.AppendAllTextAsync(_patientsFilePath, $"{patient}\n");
                 _logger.LogInformation("Patient created successfully: {Patient}", patient);
                 return patient;
@@ -113,8 +127,29 @@ namespace BusinessLogic.Managers
                 return null;
             }
 
+            // Update only name and lastname, keep other properties
+            var oldPatient = patients[patientIndex];
             patients[patientIndex].Name = name;
             patients[patientIndex].LastName = lastName;
+
+            // If PatientCode is empty or null, generate it
+            if (string.IsNullOrEmpty(patients[patientIndex].PatientCode))
+            {
+                try
+                {
+                    patients[patientIndex].PatientCode = await _patientCodeService.GeneratePatientCodeAsync(
+                        name, 
+                        lastName, 
+                        ci);
+                    
+                    _logger.LogInformation("Generated patient code during update: {PatientCode}", patients[patientIndex].PatientCode);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error generating patient code during update");
+                    // Continue with the update even if patient code generation fails
+                }
+            }
 
             try
             {

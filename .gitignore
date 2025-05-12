@@ -1,23 +1,45 @@
-# .NET Core
-bin/
-obj/
-*.user
+# Visual Studio files
+.vs/
 *.suo
-*.vs/
-.vscode/
-.idea/
-*.DotSettings.user
+*.user
+*.userosscache
+*.sln.docstates
 
 # Build results
 [Dd]ebug/
+[Dd]ebugPublic/
 [Rr]elease/
+[Rr]eleases/
 x64/
 x86/
-build/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
 bld/
 [Bb]in/
 [Oo]bj/
+[Ll]og/
+[Ll]ogs/
 
-# Visual Studio
-*.userosscache
-*.sln.docstates 
+# Visual Studio Code
+.vscode/
+.code-workspace
+
+# .NET Core
+*.swp
+*.*~
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Database files
+Database/
+*.db
+
+# Azure App Service configuration
+Properties/PublishProfiles/
+Properties/ServiceDependencies/
+.env
+appsettings.*.json
+!appsettings.Development.json
+!appsettings.json
